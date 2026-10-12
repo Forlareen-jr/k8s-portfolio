@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: k8s-prod
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: nginx
+          image: helpdesk-frontend:1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          env:
+            - name: APP_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: frontend-config
+                  key: APP_NAME
+            - name: APP_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: frontend-config
+                  key: APP_ENV
+            - name: API_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: frontend-config
+                  key: API_URL
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "64Mi"
+            limits:
+              cpu: "250m"
+              memory: "128Mi"
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 20

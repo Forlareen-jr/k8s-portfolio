@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#111827">
+    <title>HelpDesk | IT Support Center</title>
+    <link rel="stylesheet" href="/style.css">
+    <script src="/app.js" defer></script>
+</head>
+<body>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <a href="#" class="brand" aria-label="HelpDesk home">
+                <span class="brand-icon">H</span>
+                <span>Help<span class="brand-accent">Desk</span></span>
+            </a>
+
+        <div class="sidebar-label">WORKSPACE</div>
+
+        <nav class="navigation" aria-label="Main navigation">
+            <a href="#dashboard" class="nav-link active">
+                <span class="nav-icon">▦</span>
+                Dashboard
+            </a>
+            <a href="#tickets-section" class="nav-link">
+                <span class="nav-icon">▤</span>
+                All Tickets
+            </a>
+            <a href="#create-ticket" class="nav-link">
+                <span class="nav-icon">＋</span>
+                Create Ticket
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="sidebar-status">
+                <span class="status-dot"></span>
+                <div>
+                    <strong>Support API</strong>
+                    <small id="connection-status">Checking connection...</small>
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                <span class="avatar">IT</span>
+                <div>
+                    <strong>IT Support</strong>
+                    <small>Support Workspace</small>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-content" id="dashboard">
+        <header class="topbar">
+            <div>
+                <p class="eyebrow">WORKSPACE / OVERVIEW</p>
+                <h1>Helpdesk Dashboard</h1>
+                <p class="page-description">
+                    Monitor support requests and keep your team moving.
+                </p>
+            </div>
+
+            <button class="button button-primary" id="open-ticket-form">
+                <span aria-hidden="true">＋</span>
+                New Ticket
+            </button>
+        </header>
+
+        <section class="stats-grid" aria-label="Ticket statistics">
+            <article class="stat-card">
+                <div class="stat-top">
+                    <span>Total Tickets</span>
+                    <span class="stat-icon icon-blue">▤</span>
+                </div>
+                <strong class="stat-number" id="total-tickets">—</strong>
+                <p>All recorded requests</p>
+            </article>
+
+            <article class="stat-card">
+                <div class="stat-top">
+                    <span>Open</span>
+                    <span class="stat-icon icon-orange">◷</span>
+                </div>
+                <strong class="stat-number" id="open-tickets">—</strong>
+                <p>Awaiting action</p>
+            </article>
+
+            <article class="stat-card">
+                <div class="stat-top">
+                    <span>In Progress</span>
+                    <span class="stat-icon icon-purple">↻</span>
+                </div>
+                <strong class="stat-number" id="progress-tickets">—</strong>
+                <p>Currently being handled</p>
+            </article>
+
+            <article class="stat-card">
+                <div class="stat-top">
+                    <span>Resolved</span>
+                    <span class="stat-icon icon-green">✓</span>
+                </div>
+                <strong class="stat-number" id="resolved-tickets">—</strong>
+                <p>Successfully completed</p>
+            </article>
+        </section>
+
+        <section class="tickets-panel" id="tickets-section">
+            <div class="panel-header">
+                <div>
+                    <h2>Support Tickets</h2>
+                    <p>Review and manage incoming support requests.</p>
+                </div>
+
+                <button class="button button-secondary" id="refresh-tickets">
+                    <span aria-hidden="true">↻</span>
+                    Refresh
+                </button>
+            </div>
+
+            <div class="toolbar">
+                <label class="search-box">
+                    <span aria-hidden="true">⌕</span>
+                    <input
+                        type="search"
+                        id="ticket-search"
+                        placeholder="Search tickets..."
+                        aria-label="Search tickets"
+                    >
+                </label>
+
+                <label class="filter-box">
+                    <span class="visually-hidden">Filter by status</span>
+                    <select id="status-filter">
+                        <option value="All">All statuses</option>
+                        <option value="Open">Open</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Resolved">Resolved</option>
+                        <option value="Closed">Closed</option>
+                    </select>
+                </label>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ticket</th>
+                            <th>Requester</th>
+                            <th>Category</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tickets-table-body">
+                        <tr>
+                            <td colspan="6" class="empty-state">
+                                Loading support tickets...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-footer">
+                <span id="ticket-count">Loading tickets...</span>
+                <span>HelpDesk Support Center</span>
+            </div>
+        </section>
+
+        <footer class="page-footer">
+            <span>HelpDesk · IT Support Management</span>
+            <span>Powered by Kubernetes</span>
+        </footer>
+    </main>
+</div>
+
+<dialog id="ticket-dialog" class="ticket-dialog">
+    <div class="dialog-header">
+        <div>
+            <p class="eyebrow">SUPPORT REQUEST</p>
+            <h2>Create a New Ticket</h2>
+            <p>Provide the details so the team can help.</p>
+        </div>
+        <button
+            type="button"
+            class="close-button"
+            id="close-ticket-form"
+            aria-label="Close form"
+        >×</button>
+    </div>
+
+    <form id="ticket-form">
+        <label for="ticket-title">Ticket title <span>*</span></label>
+        <input
+            id="ticket-title"
+            name="title"
+            type="text"
+            maxlength="200"
+            placeholder="e.g. Unable to connect to Wi-Fi"
+            required
+        >
+
+        <label for="ticket-description">Description</label>
+        <textarea
+            id="ticket-description"
+            name="description"
+            rows="4"
+            placeholder="Describe the problem..."
+        ></textarea>
+
+        <div class="form-row">
+            <div>
+                <label for="ticket-category">Category <span>*</span></label>
+                <select id="ticket-category" name="category" required>
+                    <option value="">Select category</option>
+                    <option value="Hardware">Hardware</option>
+                    <option value="Software">Software</option>
+                    <option value="Network">Network</option>
+                    <option value="Account Access">Account Access</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="ticket-priority">Priority</label>
+                <select id="ticket-priority" name="priority">
+                    <option value="Low">Low</option>
+                    <option value="Medium" selected>Medium</option>
+                    <option value="High">High</option>
+                    <option value="Critical">Critical</option>
+                </select>
+            </div>
+        </div>
+
+        <label for="ticket-requester">Requester name <span>*</span></label>
+        <input
+            id="ticket-requester"
+            name="created_by"
+            type="text"
+            maxlength="100"
+            placeholder="Enter requester name"
+            required
+        >
+
+        <p id="form-message" class="form-message" role="status"></p>
+
+        <div class="dialog-actions">
+            <button type="button" class="button button-secondary" id="cancel-ticket">
+                Cancel
+            </button>
+            <button type="submit" class="button button-primary" id="submit-ticket">
+                Create Ticket
+            </button>
+        </div>
+    </form>
+</dialog>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+</body>
+</html>
