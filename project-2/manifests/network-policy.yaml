@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: secure-nginx-ingress
+  namespace: k8s-security
+spec:
+  podSelector:
+    matchLabels:
+      app: secure-nginx
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: network-test-client
+      ports:
+        - protocol: TCP
+          port: 8080

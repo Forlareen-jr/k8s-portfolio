@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: noncompliant-pod
+  namespace: k8s-security
+spec:
+  containers:
+    - name: test
+      image: nginx:alpine
+      ports:
+        - containerPort: 80
